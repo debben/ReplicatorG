@@ -72,7 +72,16 @@ public class ToolpathGeneratorFactory {
 					return absSlicerLocation;
 				}
 				if (Base.isLinux()) {
-					slic3rDir +=  "/linux/bin";
+					if (Base.isx86_64()) {
+						slic3rDir +=  "/linux/x86_64/bin";
+					}
+					else if (Base.isx86()) {
+						slic3rDir +=  "/linux/x86/bin";
+					}
+					else {
+						Base.logger.severe("Looking for Slic3r on non existent architecture");
+						//implement 6502 support
+					}
 				}
 				if (Base.isWindows()) {
 					slic3rDir +=  "/windows";
@@ -478,6 +487,8 @@ public class ToolpathGeneratorFactory {
 		if((new Slic3r071()).getDefaultSlic3rDir().exists())
 			list.add(new ToolpathGeneratorDescriptor(Slic3r071.displayName, 
 				"This is the latest version of Slic3r.", Slic3r071.class));
+		else
+			Base.logger.severe("cant find slic3r: " + new Slic3r071().getDefaultSlic3rDir().getAbsolutePath());
 		if((new Skeinforge50()).getDefaultSkeinforgeDir().exists())
 			list.add(new ToolpathGeneratorDescriptor(Skeinforge50.displayName, 
 				"This is the default version of skeinforge.", Skeinforge50.class));

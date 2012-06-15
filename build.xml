@@ -343,8 +343,9 @@
 		<!-- permissions -->
 		<chmod file="${target.dir}/replicatorg" perm="ugo+rx" />
 		<chmod file="${target.dir}/tools/avrdude" perm="ugo+rx" />
-		<chmod file="${target.dir}/skein_engines/slic3r_engines/linux/bin/slic3r" perm="ugo+rx" />
-		<chmod file="${target.dir}/skein_engines/slic3r_engines/linux/bin/do_install" perm="ugo+rx" />
+		<chmod file="${target.dir}/skein_engines/slic3r_engines/linux/x86/bin/slic3r" perm="ugo+rx" />
+		<chmod file="${target.dir}/skein_engines/slic3r_engines/linux/x86_64/bin/slic3r" perm="ugo+rx" />
+		<chmod file="${target.dir}/skein_engines/slic3r_engines/linux/x86/bin/do_install" perm="ugo+rx" />
 		<chmod file="${target.dir}/skein_engines/mg_engines/linux/x86_64/miracle_grue" perm="ugo+rx" />
 		<chmod file="${target.dir}/skein_engines/mg_engines/linux/x86_64/miracle_grue_glibc_2_14" perm="ugo+rx" />
 		<chmod file="${target.dir}/skein_engines/mg_engines/linux/x86_64/miracle_grue_glibc_2_13" perm="ugo+rx" />
@@ -354,8 +355,10 @@
 			<tarfileset dir="dist/linux/${release.name}" prefix="${release.name}" filemode="755">
 				<include name="replicatorg" />
 				<include name="tools/avrdude" />
-				<include name="skein_engines/slic3r_engines/linux/bin/slic3r" />
-				<include name="skein_engines/slic3r_engines/linux/bin/do_install" />
+				<include name="skein_engines/slic3r_engines/linux/x86/bin/slic3r" />
+				<include name="skein_engines/slic3r_engines/linux/x86_64/bin/slic3r" />
+				<include name="skein_engines/slic3r_engines/linux/x86/bin/do_install" />
+				<include name="skein_engines/slic3r_engines/linux/x86_64/bin/do_install" />
 				<include name="skein_engines/mg_engines/linux/x86_64/miracle_grue" />
 				<include name="skein_engines/mg_engines/linux/x86_64/miracle_grue_glibc_2_14" />
 				<include name="skein_engines/mg_engines/linux/x86_64/miracle_grue_glibc_2_13" />
