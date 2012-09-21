@@ -13,6 +13,7 @@ import replicatorg.app.exceptions.SerialException;
 import replicatorg.app.tools.XML;
 import replicatorg.app.util.serial.Serial;
 import replicatorg.app.util.serial.SerialFifoEventListener;
+import replicatorg.app.util.serial.SerialInterface;
 
 /**
  * @author phooky
@@ -20,7 +21,7 @@ import replicatorg.app.util.serial.SerialFifoEventListener;
  */
 public class SerialDriver extends DriverBaseImplementation implements UsesSerial {
 
-	protected Serial serial;
+	protected SerialInterface serial;
 	
     private String portName;
     private int rate;
@@ -31,7 +32,9 @@ public class SerialDriver extends DriverBaseImplementation implements UsesSerial
     private boolean explicit = false;
 	
     /** Lock for multi-threaded access to this driver's serial port. */
-	private final ReentrantReadWriteLock serialLock = new ReentrantReadWriteLock();
+    //<NETWORK PORT CODE>
+    //changed visibility of serial lock to protected so it could be used by child classes.
+	protected final ReentrantReadWriteLock serialLock = new ReentrantReadWriteLock();
 	/** Locks the serial object as in use so that it cannot be disposed until it is 
 	 * unlocked. Multiple threads can hold this lock concurrently. */
 	public final ReadLock serialInUse = serialLock.readLock();
@@ -98,7 +101,11 @@ public class SerialDriver extends DriverBaseImplementation implements UsesSerial
 			// asynch option: the serial port forwards all received data in FIFO format via 
 			// serialByteReceivedEvent if the driver implements SerialFifoEventListener.
 			if (this instanceof SerialFifoEventListener && serial != null) {
-				serial.listener.set( (SerialFifoEventListener) this );
+				//<NETWORK PORT CODE>
+				//had to make a change cause now we're using a generic interface
+				if(serial instanceof Serial){
+					((Serial)serial).listener.set( (SerialFifoEventListener) this );
+				}
 			}
 		}
 		serialLock.writeLock().unlock();

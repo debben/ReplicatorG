@@ -49,7 +49,7 @@ import replicatorg.app.exceptions.SerialException;
 import replicatorg.app.exceptions.UnknownSerialPortException;
 
 
-public class Serial implements SerialPortEventListener {
+public class Serial implements SerialPortEventListener, SerialInterface {
 
 	/**
 	 * We maintain our own set of ports in current use, because RXTX can't be trusted.
@@ -112,7 +112,7 @@ public class Serial implements SerialPortEventListener {
 		// In-use ports may not end up in the enumeration (thanks, RXTX), so
 		// we'll scan for them, and insert them if necessary.  (The app wants
 		// to display in-use ports to reduce user confusion.)
-		for (Serial port: portsInUse) {
+		for (SerialInterface port: portsInUse) {
 			Name n = new Name(port.getName(),false);
 			boolean contains = false;
 			for (Name vi : v) { // vector.contains doesn't use comparable.
@@ -167,6 +167,11 @@ public class Serial implements SerialPortEventListener {
 				}
 			}
 		}
+		
+		//<NETWORK PORT CODE>
+		//lets add an item which points to the network port
+		Name n = new Name("192.168.0.200:8225", "printer@192.168.0.200", true);
+		v.add(n);
 
 		return v;
 	}
@@ -179,6 +184,9 @@ public class Serial implements SerialPortEventListener {
 		init(name,38400,'N',8,1);
 	}
 	
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#getName()
+	 */
 	public String getName() { return name; }
 	
 
@@ -237,8 +245,8 @@ public class Serial implements SerialPortEventListener {
 	}
 
 	
-	/**
-	 * Unregister and close the port.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#dispose()
 	 */
 	public synchronized void dispose() {
 		connected.set(false);
@@ -273,9 +281,8 @@ public class Serial implements SerialPortEventListener {
 		portsInUse.remove(this);
 	}
 
-	/**
-	 * Briefly pulse the RTS line low.  On most arduino-based boards, this will hard reset the
-	 * device.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#pulseRTSLow()
 	 */
 	public void pulseRTSLow() {
 		port.setDTR(false);
@@ -318,9 +325,8 @@ public class Serial implements SerialPortEventListener {
 		return 0;
 	}
 	
-	/**
-	 * Attempt to read a single byte.
-	 * @return the byte read, or -1 to indicate a timeout.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#read()
 	 */
 	public int read() {
  		//wait for the fifo to fill
@@ -345,13 +351,8 @@ public class Serial implements SerialPortEventListener {
 		}
 	}
 
-	/**
-	 * Attempt to fill the given buffer.  This method blocks until input data is available, 
-	 * end of file is detected, or an exception is thrown.  It is meant to emulate the
-	 * behavior of the call of the same signature on InputStream, with the significant
-	 * difference that it will terminate when the timeout is exceeded.
-	 * @param bytes The buffer to fill with as much data as is available.
-	 * @return the number of characters read.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#read(byte[])
 	 */
  	public int read(byte bytes[]) {
  		//wait for the fifo to fill
@@ -366,6 +367,9 @@ public class Serial implements SerialPortEventListener {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#write(byte[])
+	 */
 	public void write(byte bytes[]) {
 		if (!connected.get()) {
 			Base.logger.severe("serial disconnected");
@@ -381,30 +385,25 @@ public class Serial implements SerialPortEventListener {
 		}
 	}
 
-	/**
-	 * Write a String to the output. Note that this doesn't account for Unicode
-	 * (two bytes per char), nor will it send UTF8 characters.. It assumes that
-	 * you mean to send a byte buffer (most often the case for networking and
-	 * serial i/o) and will only use the bottom 8 bits of each char in the
-	 * string. (Meaning that internally it uses String.getBytes)
-	 * 
-	 * If you want to move Unicode data, you can first convert the String to a
-	 * byte stream in the representation of your choice (i.e. UTF8 or two-byte
-	 * Unicode data), and send it as a byte array.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#write(java.lang.String)
 	 */
 	public void write(String what) {
 		write(what.getBytes());
 	}
 
 
-	/**
-	 * Set the amount of time we're willing to wait for a read to timeout.
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#setTimeout(int)
 	 */
 	public void setTimeout(int timeoutMillis) {
 		this.timeoutMillis = timeoutMillis;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#clear()
+	 */
 	public void clear() {
 		synchronized (readFifo) {
 			// If we're eating more than 255 characters, then there's a serious error:
@@ -437,8 +436,8 @@ public class Serial implements SerialPortEventListener {
 		}
 	}
 	
-	/**
-	 * Indicates if we've received 
+	/* (non-Javadoc)
+	 * @see replicatorg.app.util.serial.SerialInterface#isConnected()
 	 */
 	public boolean isConnected() { return (connected.get()); }
 
