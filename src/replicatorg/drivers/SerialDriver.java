@@ -13,7 +13,7 @@ import replicatorg.app.exceptions.SerialException;
 import replicatorg.app.tools.XML;
 import replicatorg.app.util.serial.Serial;
 import replicatorg.app.util.serial.SerialFifoEventListener;
-import replicatorg.app.util.serial.SerialInterface;
+
 
 /**
  * @author phooky
@@ -21,7 +21,7 @@ import replicatorg.app.util.serial.SerialInterface;
  */
 public class SerialDriver extends DriverBaseImplementation implements UsesSerial {
 
-	protected SerialInterface serial;
+	protected Serial serial;
 	
     private String portName;
     private int rate;
